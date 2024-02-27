@@ -12,7 +12,7 @@
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
     "size": "size-limit",
-    "test": "jest --config jest.config.js",
+    "test": "jest --coverage --config jest.config.js",
     "version": "npm run format && git add -A src"
   },
   "repository": {
