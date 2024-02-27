@@ -9,7 +9,7 @@ describe('CalenthorApi', () => {
         calenthorApi = new CalenthorApi();
     });
 
-    it('creates a new event successfully', () => {
+    it('it creates a new event successfully', () => {
         const start = new Date();
         const duration = new Duration(60);
         const event = calenthorApi.createEvent('Test Event', start, duration);
@@ -21,7 +21,7 @@ describe('CalenthorApi', () => {
             .toBe(duration);
     });
 
-    it('lists events within a given date range', () => {
+    it('it lists events within a given date range', () => {
         const start = new Date();
         const duration = new Duration(60);
         const event = calenthorApi.createEvent('Test Event', start, duration);
@@ -34,7 +34,7 @@ describe('CalenthorApi', () => {
             .toContain(event);
     });
 
-    it('updates an existing event successfully', () => {
+    it('it updates an existing event successfully', () => {
         const start = new Date();
         const duration = new Duration(60);
         const event = calenthorApi.createEvent('Test Event', start, duration);
@@ -43,7 +43,7 @@ describe('CalenthorApi', () => {
             .toBe('Updated Event');
     });
 
-    it('deletes an existing event successfully', () => {
+    it('it deletes an existing event successfully', () => {
         const start = new Date();
         const duration = new Duration(60);
         const event = calenthorApi.createEvent('Test Event', start, duration);
