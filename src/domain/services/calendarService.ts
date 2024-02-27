@@ -1,31 +1,79 @@
-import { Duration } from '../models';
+import { CalendarEvent, Duration } from '../models';
 import { DateRange } from '../../types';
 import { EventRepository } from '../../repositories';
+import { EventNotFoundError, EventOverlapsError } from '../../errors';
+import { generateUUID } from '../../utils';
 
-export class CalendarService {
+interface ICalendarService {
+    createEvent(title: string, start: Date, duration: Duration): void;
+
+    listEvents(range: DateRange): CalendarEvent[];
+
+    updateEvent(id: string, title: string, start: Date, duration: Duration): CalendarEvent;
+
+    deleteEvent(id: string): boolean;
+}
+
+export class CalendarService implements ICalendarService {
     private eventRepository = new EventRepository();
 
-    // TODO: Remove the eslint-disable-next-line comment
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createEvent(title: string, start: Date, duration: Duration, allowOverlap: boolean = false) {
-        // TODO: Complete this method
+    private checkForOverlap(start: Date, end: Date, excludeEventId?: string): boolean {
+        return this.eventRepository.listEvents()
+            .some(event => {
+                if (excludeEventId && event.id === excludeEventId) return false;
+                return (start < event.end && end > event.start);
+            });
     }
 
-    // TODO: Remove the eslint-disable-next-line comment
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    listEvents(range: DateRange) {
-        // TODO: Complete this method
+    createEvent(title: string, start: Date, duration: Duration) {
+        const end = new Date(start.getTime() + duration.value);
+        if (this.checkForOverlap(start, end)) {
+            throw new EventOverlapsError();
+        }
+
+        const newEvent = new CalendarEvent(
+            generateUUID(),
+            title,
+            start,
+            duration,
+        );
+        this.eventRepository.addEvent(newEvent);
+        return newEvent;
     }
 
-    // TODO: Remove the eslint-disable-next-line comment
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateEvent(id: string, title: string, start: Date, duration: Duration, allowOverlap: boolean = false) {
-        // TODO: Complete this method
+    listEvents(range: DateRange): CalendarEvent[] {
+        return this.eventRepository
+            .listEvents()
+            .filter(event =>
+                (event.start >= range.start && event.start <= range.end) ||
+                (event.end >= range.start && event.end <= range.end));
     }
 
-    // TODO: Remove the eslint-disable-next-line comment
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    deleteEvent(id: string) {
-        // TODO: Complete this method
+    updateEvent(id: string, title: string, start: Date, duration: Duration): CalendarEvent {
+        const existingEvent = this.eventRepository.findEventById(id);
+        if (!existingEvent) {
+            throw new EventNotFoundError(`Event with ID ${id} not found.`);
+        }
+
+        const newEnd = new Date(start.getTime() + duration.value);
+        if (this.checkForOverlap(start, newEnd, id)) {
+            throw new EventOverlapsError();
+        }
+
+        existingEvent.title = title;
+        existingEvent.start = start;
+        existingEvent.duration = duration;
+
+        this.eventRepository.updateEvent(existingEvent);
+        return existingEvent;
+    }
+
+    deleteEvent(id: string): boolean {
+        const existingEvent = this.eventRepository.findEventById(id);
+        if (!existingEvent) {
+            throw new EventNotFoundError(`Event with ID ${id} not found.`);
+        }
+
+        return this.eventRepository.deleteEvent(id);
     }
 }

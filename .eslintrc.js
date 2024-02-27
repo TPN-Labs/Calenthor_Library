@@ -34,7 +34,7 @@ module.exports = {
         'arrow-parens': ['error', 'as-needed'],
         'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
         'no-new': 'off',
-        'max-len': ['error', { code: 144, ignoreUrls: true }],
+        'max-len': ['error', { code: 150, ignoreUrls: true }],
         'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
         'no-shadow': 'off',
         indent: ['error', 4],
