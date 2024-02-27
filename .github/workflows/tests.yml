@@ -1,4 +1,4 @@
-name: Check dependencies & build project
+name: Running the unit tests
 
 on:
   pull_request:
@@ -6,22 +6,15 @@ on:
 
 jobs:
   build:
-    name: using Node ${{ matrix.node }} with OS ${{ matrix.os }}
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node: ["18.x", "20.x"]
-        os: [ubuntu-latest, macOS-latest]
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Use Node ${{ matrix.node }}
+      - name: Use Node 20
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20.x
 
       - name: Install dependencies
         run: yarn install
@@ -31,3 +24,6 @@ jobs:
 
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
