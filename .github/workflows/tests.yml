@@ -5,7 +5,7 @@ on:
     branches: ['main']
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -27,3 +27,6 @@ jobs:
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          check_name: "Test Results"
+          files: "coverage/**/*.xml"
