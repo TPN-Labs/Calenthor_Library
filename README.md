@@ -6,6 +6,44 @@
 > ℹ️ The project uses the [TPN-Labs/keez-node](https://github.com/TPN-Labs/keez-node) as a starting point for structuring
 the files and folders. Also, the base package.json is from the same repository.
 
+## 📚 Description
+
+Calenthor is a library that provides a set of tools to manage and manipulate calendar events. It is designed to be
+flexible and easy to use, allowing developers to create, update, and delete events, as well as listing them based on
+an interval of time.
+
+## 📦 Installation
+
+```bash
+npm install calenthor
+```
+
+Or using yarn:
+
+```bash
+yarn add calenthor
+```
+
+## 📖 Usage
+
+```typescript
+import { CalenthorApi, EventItem, Duration } from 'calenthor';
+
+const calendar = new CalenthorApi();
+
+const event: EventItem = {
+    title: 'Meeting',
+    start: new Date('2024-12-01T10:00:00'),
+    duration: new Duration(MILLISECONDS_IN_A_DAY),
+};
+
+calendar.addEvent(event);
+calendar.listEvents({
+    start: new Date('2024-12-01T00:00:00'),
+    end: new Date('2024-12-02T00:00:00'),
+});
+```
+
 
 ### 📁 Project Structure
     .
@@ -38,6 +76,17 @@ the files and folders. Also, the base package.json is from the same repository.
     ├── tests/
     │   └── Contains all the test files.
     └──────
+
+### 🚀 CI/CD
+
+The project uses GitHub Actions for CI/CD. The workflow is defined in the `.github/workflows` folder.
+
+The workflow executed when a pull request is opened or updated are:
+- `build.yml`: It installs the dependencies and builds the project for the Node.js `18.x` and `20.x` versions using 
+the `ubuntu-latest` and `macos-latest` operating systems. 
+- `SonarQube`: It runs the SonarQube analysis and sends the report to the SonarQube server
+- `lint.yml`: It runs the linter and checks for code style issues
+- `test.yml`: It runs the tests and generates the coverage report as PR comment
 
 
 ## 📝 License
