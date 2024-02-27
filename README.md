@@ -12,17 +12,18 @@ the files and folders. Also, the base package.json is from the same repository.
     ├── src/
     │   └── Holds the source code of the application.
     │   ├── api/
-    │   │   └── Holds the API interface files, such as the REST API controllers or service interfaces 
-    │   │       that external clients interact with.
+    │   │   └── Holds the API interface files, such as the REST API controllers or service 
+    │   │       interfaces that external clients interact with.
     │   ├── config/
     │   │   └── Configuration files, such as environment variables, etc.
     │   ├── domain/
-    │   ├── ├── Contains the core business logic and domain models.
+    │   │   ├── Contains the core business logic and domain models.
     │   │   ├── models/
-    │   │   │   ├── Defines the entities and value objects of the domain, such as CalendarEvent and Duration.
+    │   │   │   └── Defines the entities and value objects of the domain, such
+    │   │   │       as the Calendar, Event, etc.
     │   │   └── services/
-    │   │       └── Contains domain services (CalendarService.ts) that contain business logic
-    │   │           orchestrating domain model interactions.
+    │   │       └── Contains domain services (CalendarService.ts) that contain business
+    │   │            logic orchestrating domain model interactions.
     │   ├── errors/
     │   │   └── Custom error classes.
     │   ├── repositories/
@@ -32,7 +33,8 @@ the files and folders. Also, the base package.json is from the same repository.
     │   │   └── The definitions of types and interfaces that are shared across the project.
     │   ├── utils/
     │   │   └── Utility functions and helpers, like date manipulation functions.
-    │   └── index.ts  # The main entry point for the module, which exports the API for external use.
+    │   └── index.ts   The main entry point for the module, which
+    │                  exports the public API of the library.
     ├── tests/
     │   └── Contains all the test files.
     └──────

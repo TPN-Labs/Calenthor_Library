@@ -1,6 +1,6 @@
 import { CalendarEvent } from '../../src/domain/models';
 import { generateUUID } from '../../src/utils';
-import { MILISECONDS_IN_A_SECOND, SECONDS_IN_A_MINUTE } from '../../src/config';
+import { MILLISECONDS_IN_A_SECOND, SECONDS_IN_A_MINUTE } from '../../src/config';
 
 const generateString = (length: number): string => {
     let result = '';
@@ -16,5 +16,5 @@ export const newEvent = new CalendarEvent(
     generateUUID(),
     generateString(10),
     new Date(),
-    { value: MILISECONDS_IN_A_SECOND * SECONDS_IN_A_MINUTE * 30 }, // 30 minutes
+    { value: MILLISECONDS_IN_A_SECOND * SECONDS_IN_A_MINUTE * 30 }, // 30 minutes
 );
