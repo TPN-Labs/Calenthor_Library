@@ -1,6 +1,7 @@
-import { CalendarEvent } from '../../src/domain/models';
+import { RecurrenceRule } from '../../src/domain/models';
 import { generateUUID } from '../../src/utils';
-import { MILLISECONDS_IN_A_SECOND, SECONDS_IN_A_MINUTE } from '../../src/config';
+import { MILLISECONDS_IN_A_MINUTE } from '../../src/config';
+import { EventItem, RecurrenceFrequency } from '../../src/types';
 
 const generateString = (length: number): string => {
     let result = '';
@@ -12,9 +13,16 @@ const generateString = (length: number): string => {
     return result;
 };
 
-export const newEvent = new CalendarEvent(
-    generateUUID(),
-    generateString(10),
-    new Date(),
-    { value: MILLISECONDS_IN_A_SECOND * SECONDS_IN_A_MINUTE * 30 }, // 30 minutes
+export const newEventItem: EventItem = {
+    id: generateUUID(),
+    title: generateString(10),
+    start: new Date(),
+    duration: { value: MILLISECONDS_IN_A_MINUTE * 30 }, // 30 minutes
+};
+
+export const newRecurrenceRule = new RecurrenceRule(
+    RecurrenceFrequency.DAILY,
+    1,
+    null,
+    null,
 );

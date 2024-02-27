@@ -1,6 +1,7 @@
 import { EventRepository } from '../../src/repositories';
-import { CalendarEvent } from '../../src/domain/models';
-import { newEvent } from '../data';
+import { CalendarEvent, Duration } from '../../src/domain/models';
+import { generateUUID } from '../../src/utils';
+import { MILLISECONDS_IN_A_DAY } from '../../src/config';
 
 describe('EventRepository', () => {
     let repository: EventRepository;
@@ -8,7 +9,12 @@ describe('EventRepository', () => {
 
     beforeEach(() => {
         repository = new EventRepository();
-        event = newEvent;
+        event = new CalendarEvent(
+            generateUUID(),
+            'test-title',
+            new Date(),
+            new Duration(MILLISECONDS_IN_A_DAY),
+        );
     });
 
     it('it adds an event successfully', () => {
