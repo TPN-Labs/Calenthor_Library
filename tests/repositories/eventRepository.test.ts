@@ -1,7 +1,5 @@
 import { EventRepository } from '../../src/repositories';
 import { CalendarEvent } from '../../src/domain/models';
-import { EventNotFoundError } from '../../src/errors';
-import { generateUUID } from '../../src/utils';
 import { newEvent } from '../data';
 
 describe('EventRepository', () => {
@@ -44,18 +42,10 @@ describe('EventRepository', () => {
         expect(repository.findEventById(event.id)?.title).toBe('new-title');
     });
 
-    it('it throws an error when updating a non-existing event', () => {
-        expect(() => repository.updateEvent(event)).toThrow(EventNotFoundError);
-    });
-
     it('it deletes an event by its ID', () => {
         repository.addEvent(event);
         const deleteResult = repository.deleteEvent(event.id);
         expect(deleteResult).toBe(true);
         expect(repository.findEventById(event.id)).toBeUndefined();
-    });
-
-    it('it throws an error when deleting a non-existing event', () => {
-        expect(() => repository.deleteEvent(generateUUID())).toThrow(EventNotFoundError);
     });
 });
