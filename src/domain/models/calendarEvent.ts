@@ -1,6 +1,7 @@
 import { Duration } from './duration';
 
 export class CalendarEvent {
+    // eslint-disable-next-line no-useless-constructor
     constructor(
         public id: string,
         public title: string,
