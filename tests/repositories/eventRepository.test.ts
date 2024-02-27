@@ -1,8 +1,8 @@
 import { EventRepository } from '../../src/repositories';
 import { CalendarEvent } from '../../src/domain/models';
-import { newEvent } from '../data';
 import { EventNotFoundError } from '../../src/errors';
 import { generateUUID } from '../../src/utils';
+import { newEvent } from '../data';
 
 describe('EventRepository', () => {
     let repository: EventRepository;
