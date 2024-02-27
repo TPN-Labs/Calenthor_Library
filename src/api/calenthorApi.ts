@@ -5,16 +5,16 @@ import { DateRange } from '../types';
 export class CalenthorApi {
     private calendarService = new CalendarService();
 
-    createEvent(title: string, start: Date, duration: Duration, allowOverlap: boolean = false) {
-        return this.calendarService.createEvent(title, start, duration, allowOverlap);
+    createEvent(title: string, start: Date, duration: Duration) {
+        return this.calendarService.createEvent(title, start, duration);
     }
 
     listEvents(range: DateRange) {
         return this.calendarService.listEvents(range);
     }
 
-    updateEvent(id: string, title: string, start: Date, duration: Duration, allowOverlap: boolean = false) {
-        return this.calendarService.updateEvent(id, title, start, duration, allowOverlap);
+    updateEvent(id: string, title: string, start: Date, duration: Duration) {
+        return this.calendarService.updateEvent(id, title, start, duration);
     }
 
     deleteEvent(id: string) {
