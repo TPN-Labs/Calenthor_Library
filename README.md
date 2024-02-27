@@ -8,12 +8,14 @@ the files and folders. Also, the base package.json is from the same repository.
 
 
 ### 📁 Project Structure
-
-    src/
-    ├── Contains all the source code for the project.
+    .
+    ├── src/
+    │   └── Holds the source code of the application.
     │   ├── api/
     │   │   └── Holds the API interface files, such as the REST API controllers or service interfaces 
     │   │       that external clients interact with.
+    │   ├── config/
+    │   │   └── Configuration files, such as environment variables, etc.
     │   ├── domain/
     │   ├── ├── Contains the core business logic and domain models.
     │   │   ├── models/
@@ -21,6 +23,8 @@ the files and folders. Also, the base package.json is from the same repository.
     │   │   └── services/
     │   │       └── Contains domain services (CalendarService.ts) that contain business logic
     │   │           orchestrating domain model interactions.
+    │   ├── errors/
+    │   │   └── Custom error classes.
     │   ├── repositories/
     │   │   └── Abstractions over data access layers, allowing for decoupling the
     │   │       application from the data source.
