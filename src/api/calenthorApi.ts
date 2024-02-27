@@ -1,23 +1,46 @@
 import { CalendarService } from '../domain/services';
-import { Duration } from '../domain/models';
-import { DateRange } from '../types';
+import { CalendarEvent } from '../domain/models';
+import { DateRange, EventItem } from '../types';
 
-export class CalenthorApi {
+interface ICalenthorApi {
+    createEvent(event: EventItem): void;
+
+    listEvents(range: DateRange): CalendarEvent[];
+
+    updateEvent(event: EventItem): CalendarEvent;
+
+    deleteEvent(id: string): boolean;
+
+    deleteRecurringEventById(id: string): boolean;
+
+    deleteFutureRecurringEventsById(id: string, start: Date): boolean;
+}
+
+export class CalenthorApi implements ICalenthorApi {
+
     private calendarService = new CalendarService();
 
-    createEvent(title: string, start: Date, duration: Duration) {
-        return this.calendarService.createEvent(title, start, duration);
+    public createEvent(event: EventItem) {
+        return this.calendarService.createEvent(event);
     }
 
-    listEvents(range: DateRange) {
+    public listEvents(range: DateRange) {
         return this.calendarService.listEvents(range);
     }
 
-    updateEvent(id: string, title: string, start: Date, duration: Duration) {
-        return this.calendarService.updateEvent(id, title, start, duration);
+    public updateEvent(event: EventItem) {
+        return this.calendarService.updateEvent(event);
     }
 
-    deleteEvent(id: string) {
+    public deleteEvent(id: string) {
         return this.calendarService.deleteEvent(id);
+    }
+
+    public deleteRecurringEventById(id: string) {
+        return this.calendarService.deleteRecurringEventById(id);
+    }
+
+    public deleteFutureRecurringEventsById(id: string, start: Date) {
+        return this.calendarService.deleteFutureRecurringEventsById(id, start);
     }
 }

@@ -1,16 +1,16 @@
-import { CalendarEvent, Duration, RecurrenceRule } from '../models';
-import { DateRange, RecurrenceFrequency } from '../../types';
+import { CalendarEvent } from '../models';
+import { DateRange, RecurrenceFrequency, EventItem } from '../../types';
 import { EventRepository } from '../../repositories';
 import { EventIsNotRecurringError, EventNotFoundError, EventOverlapsError, EventRecurrenceInvalidError } from '../../errors';
 import { generateUUID } from '../../utils';
 import { MILLISECONDS_IN_A_DAY, MILLISECONDS_IN_A_MONTH, MILLISECONDS_IN_A_WEEK } from '../../config';
 
 interface ICalendarService {
-    createEvent(title: string, start: Date, duration: Duration): void;
+    createEvent(event: EventItem): void;
 
     listEvents(range: DateRange): CalendarEvent[];
 
-    updateEvent(id: string, title: string, start: Date, duration: Duration, recurrenceRule?: RecurrenceRule): CalendarEvent;
+    updateEvent(event: EventItem): CalendarEvent;
 
     deleteEvent(id: string): boolean;
 
@@ -35,6 +35,7 @@ export class CalendarService implements ICalendarService {
         const occurrences: CalendarEvent[] = [];
         let current = event.start;
         while (current <= end) {
+            if (event.recurrenceRule!.endDate && current > event.recurrenceRule!.endDate) break;
             if (current >= start) {
                 occurrences.push(new CalendarEvent(
                     generateUUID(),
@@ -60,17 +61,18 @@ export class CalendarService implements ICalendarService {
         return occurrences;
     }
 
-    public createEvent(title: string, start: Date, duration: Duration) {
-        const end = new Date(start.getTime() + duration.value);
-        if (this.checkForOverlap(start, end)) {
+    public createEvent(event: EventItem): CalendarEvent {
+        const end = new Date(event.start.getTime() + event.duration.value);
+        if (this.checkForOverlap(event.start, end)) {
             throw new EventOverlapsError();
         }
 
         const newEvent = new CalendarEvent(
             generateUUID(),
-            title,
-            start,
-            duration,
+            event.title,
+            event.start,
+            event.duration,
+            event.recurrenceRule,
         );
         this.eventRepository.addEvent(newEvent);
         return newEvent;
@@ -88,21 +90,21 @@ export class CalendarService implements ICalendarService {
             (event.end >= range.start && event.end <= range.end));
     }
 
-    public updateEvent(id: string, title: string, start: Date, duration: Duration, recurrenceRule?: RecurrenceRule): CalendarEvent {
-        const existingEvent = this.eventRepository.findEventById(id);
+    public updateEvent(event: EventItem): CalendarEvent {
+        const existingEvent = this.eventRepository.findEventById(event.id!);
         if (!existingEvent) {
-            throw new EventNotFoundError(`Update failed. Event with ID ${id} not found.`);
+            throw new EventNotFoundError(`Update failed. Event with ID ${event.id} not found.`);
         }
 
-        const newEnd = new Date(start.getTime() + duration.value);
-        if (this.checkForOverlap(start, newEnd, id)) {
+        const newEnd = new Date(event.start.getTime() + event.duration.value);
+        if (this.checkForOverlap(event.start, newEnd, event.id)) {
             throw new EventOverlapsError();
         }
 
-        existingEvent.title = title;
-        existingEvent.start = start;
-        existingEvent.duration = duration;
-        existingEvent.recurrenceRule = recurrenceRule;
+        existingEvent.title = event.title;
+        existingEvent.start = event.start;
+        existingEvent.duration = event.duration;
+        existingEvent.recurrenceRule = event.recurrenceRule;
 
         this.eventRepository.updateEvent(existingEvent);
         return existingEvent;
@@ -147,6 +149,7 @@ export class CalendarService implements ICalendarService {
             event.start >= start);
 
         futureEvents.forEach(event => this.eventRepository.deleteEvent(event.id));
+        existingEvent.recurrenceRule.endDate = start;
         return true;
     }
 }

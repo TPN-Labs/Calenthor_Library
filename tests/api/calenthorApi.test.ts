@@ -1,6 +1,8 @@
 import { CalenthorApi } from '../../src';
 import { Duration } from '../../src/domain/models';
 import { DateRange } from '../../src/types';
+import { MILLISECONDS_IN_A_DAY } from '../../src/config';
+import { newEventItem, newRecurrenceRule } from '../data';
 
 describe('CalenthorApi', () => {
     let calenthorApi: CalenthorApi;
@@ -10,21 +12,19 @@ describe('CalenthorApi', () => {
     });
 
     it('it creates a new event successfully', () => {
-        const start = new Date();
-        const duration = new Duration(60);
-        const event = calenthorApi.createEvent('Test Event', start, duration);
+        const event = calenthorApi.createEvent(newEventItem);
         expect(event.title)
-            .toBe('Test Event');
+            .toBe(newEventItem.title);
         expect(event.start)
-            .toBe(start);
+            .toBe(newEventItem.start);
         expect(event.duration)
-            .toBe(duration);
+            .toBe(newEventItem.duration);
     });
 
     it('it lists events within a given date range', () => {
         const start = new Date();
-        const duration = new Duration(60);
-        const event = calenthorApi.createEvent('Test Event', start, duration);
+        const duration = new Duration(MILLISECONDS_IN_A_DAY);
+        const event = calenthorApi.createEvent(newEventItem);
         const range: DateRange = {
             start,
             end: new Date(start.getTime() + duration.value),
@@ -35,19 +35,38 @@ describe('CalenthorApi', () => {
     });
 
     it('it updates an existing event successfully', () => {
-        const start = new Date();
-        const duration = new Duration(60);
-        const event = calenthorApi.createEvent('Test Event', start, duration);
-        const updatedEvent = calenthorApi.updateEvent(event.id, 'Updated Event', start, duration);
+        const event = calenthorApi.createEvent(newEventItem);
+        const updatedEvent = calenthorApi.updateEvent({
+            id: event.id,
+            title: 'updated-title',
+            start: new Date('2090-01-01'),
+            duration: new Duration(2 * MILLISECONDS_IN_A_DAY),
+        });
         expect(updatedEvent.title)
-            .toBe('Updated Event');
+            .toBe('updated-title');
+        expect(updatedEvent.start)
+            .toEqual(new Date('2090-01-01'));
+        expect(updatedEvent.duration)
+            .toEqual(new Duration(2 * MILLISECONDS_IN_A_DAY));
     });
 
     it('it deletes an existing event successfully', () => {
-        const start = new Date();
-        const duration = new Duration(60);
-        const event = calenthorApi.createEvent('Test Event', start, duration);
+        const event = calenthorApi.createEvent(newEventItem);
         const isDeleted = calenthorApi.deleteEvent(event.id);
+        expect(isDeleted)
+            .toBe(true);
+    });
+
+    it('it deletes a recurring event by id successfully', () => {
+        const event = calenthorApi.createEvent({ ...newEventItem, recurrenceRule: newRecurrenceRule });
+        const isDeleted = calenthorApi.deleteRecurringEventById(event.id);
+        expect(isDeleted)
+            .toBe(true);
+    });
+
+    it('it deletes future recurring events by id successfully', () => {
+        const event = calenthorApi.createEvent({ ...newEventItem, recurrenceRule: newRecurrenceRule });
+        const isDeleted = calenthorApi.deleteFutureRecurringEventsById(event.id, new Date('2090-01-01'));
         expect(isDeleted)
             .toBe(true);
     });
