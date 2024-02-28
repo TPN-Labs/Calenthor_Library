@@ -24,10 +24,17 @@ Or using yarn:
 yarn add calenthor
 ```
 
+### 🧩 Example
+
+> ℹ️ You can check the [TPN-Labs/Calenthor_Client](https://github.com/TPN-Labs/Calenthor_Client) repository as an
+example of how to use the library.
+
 ## 📖 Usage
 
+### 📅 Create an event
+
 ```typescript
-import { CalenthorApi, EventItem, Duration } from 'calenthor';
+import { CalenthorApi, EventItem, Duration, MILLISECONDS_IN_A_DAY } from 'calenthor-lib';
 
 const calendar = new CalenthorApi();
 
@@ -37,10 +44,34 @@ const event: EventItem = {
     duration: new Duration(MILLISECONDS_IN_A_DAY),
 };
 
-calendar.addEvent(event);
+calendar.createEvent(event);
+
 calendar.listEvents({
     start: new Date('2024-12-01T00:00:00'),
     end: new Date('2024-12-02T00:00:00'),
+});
+```
+
+### 📅 Create a recurring event
+
+```typescript
+const event: EventItem = {
+    title: 'Recurring Meeting',
+    start: new Date('2024-12-01T10:00:00'),
+    duration: new Duration(MILLISECONDS_IN_A_DAY),
+    recurrenceRule: {
+        frequency: RecurrenceFrequency.DAILY,
+        interval: 1,
+        count: null,
+        endDate: null,
+    },
+};
+
+calendar.createEvent(event);
+
+calendar.listEvents({
+    start: new Date('2024-12-01T00:00:00'),
+    end: new Date('2024-12-06T00:00:00'),
 });
 ```
 
@@ -87,7 +118,6 @@ the `ubuntu-latest` and `macos-latest` operating systems.
 - `SonarQube`: It runs the SonarQube analysis and sends the report to the SonarQube server
 - `lint.yml`: It runs the linter and checks for code style issues
 - `test.yml`: It runs the tests and generates the coverage report as PR comment
-
 
 ## 📝 License
 

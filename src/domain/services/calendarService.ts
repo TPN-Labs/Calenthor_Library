@@ -4,6 +4,7 @@ import { EventRepository } from '../../repositories';
 import { EventIsNotRecurringError, EventNotFoundError, EventOverlapsError } from '../../errors';
 import { generateUUID } from '../../utils';
 import { MILLISECONDS_IN_A_DAY, MILLISECONDS_IN_A_MONTH, MILLISECONDS_IN_A_WEEK } from '../../config';
+import { EventRangeInvalidError } from '../../errors/EventRangeInvalidError';
 
 interface ICalendarService {
     createEvent(event: EventItem): void;
@@ -84,6 +85,8 @@ export class CalendarService implements ICalendarService {
     }
 
     public listEvents(range: DateRange): CalendarEvent[] {
+        if (range.start > range.end) throw new EventRangeInvalidError('Start date cannot be greater than end date');
+
         const allEvents = this.eventRepository.listEvents();
         const recurringEventsExpanded = allEvents.flatMap(event => {
             if (!event.recurrenceRule) return [event]; // Non-recurring events are returned as is
