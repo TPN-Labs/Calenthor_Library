@@ -7,7 +7,7 @@ export class EventIsNotRecurringError extends Error {
     constructor(message: string = 'Event is not recurring') {
         super(message);
         this._logger.error(message);
-        this.name = 'EventNotFoundError';
+        this.name = 'EventIsNotRecurringError';
 
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, EventIsNotRecurringError);

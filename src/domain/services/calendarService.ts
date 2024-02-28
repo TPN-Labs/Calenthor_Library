@@ -39,6 +39,7 @@ export class CalendarService implements ICalendarService {
         let current = event.start;
         while (current <= end) {
             if (event.recurrenceRule!.endDate && current > event.recurrenceRule!.endDate) break;
+            if (event.recurrenceRule!.count && occurrences.length >= event.recurrenceRule!.count) break;
             if (current >= start) {
                 occurrences.push(new CalendarEvent(
                     generateUUID(),
