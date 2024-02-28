@@ -22,12 +22,14 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
+    "rootDir": "./src",
     "typeRoots": [
       "./node_modules/@types"
     ]
   },
   "exclude": [
     "node_modules",
+    "jest.config.js",
     "build",
     "dist",
     "tests"

@@ -3,6 +3,7 @@ import { Duration } from '../../../src/domain/models';
 import { EventIsNotRecurringError, EventNotFoundError, EventOverlapsError } from '../../../src/errors';
 import { RecurrenceFrequency } from '../../../src/types';
 import { MILLISECONDS_IN_A_DAY, MILLISECONDS_IN_A_MONTH, MILLISECONDS_IN_A_WEEK } from '../../../src/config';
+import { EventRangeInvalidError } from '../../../src/errors/EventRangeInvalidError';
 
 describe('CalendarService', () => {
     let calendarService: CalendarService;
@@ -130,6 +131,15 @@ describe('CalendarService', () => {
     });
 
     describe('listEvents', () => {
+        it('it throws an error when the start date is greater than the end date', () => {
+            expect(() => {
+                calendarService.listEvents({
+                    start: new Date('2000-01-01'),
+                    end: new Date('1990-01-01'),
+                });
+            }).toThrow(EventRangeInvalidError);
+        });
+
         it('it lists events within a given date range (start)', () => {
             const start = new Date();
             const duration = new Duration(60);

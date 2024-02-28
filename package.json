@@ -2,8 +2,8 @@
   "name": "calenthor-lib",
   "version": "1.0.0",
   "description": "Calenthor lib for MERO",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "tsc",
     "lint": "eslint src --ext .js,.ts",
