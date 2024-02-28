@@ -1,8 +1,8 @@
 import { CalenthorApi } from '../../src';
 import { Duration } from '../../src/domain/models';
-import { DateRange } from '../../src/types';
+import { DateRange, RecurrenceFrequency } from '../../src/types';
 import { MILLISECONDS_IN_A_DAY } from '../../src/config';
-import { newEventItem, newRecurrenceRule } from '../data';
+import { newEventItem } from '../data';
 
 describe('CalenthorApi', () => {
     let calenthorApi: CalenthorApi;
@@ -58,14 +58,30 @@ describe('CalenthorApi', () => {
     });
 
     it('it deletes a recurring event by id successfully', () => {
-        const event = calenthorApi.createEvent({ ...newEventItem, recurrenceRule: newRecurrenceRule });
+        const event = calenthorApi.createEvent({
+            ...newEventItem,
+            recurrenceRule: {
+                frequency: RecurrenceFrequency.DAILY,
+                interval: 1,
+                count: null,
+                endDate: null,
+            },
+        });
         const isDeleted = calenthorApi.deleteRecurringEventById(event.id);
         expect(isDeleted)
             .toBe(true);
     });
 
     it('it deletes future recurring events by id successfully', () => {
-        const event = calenthorApi.createEvent({ ...newEventItem, recurrenceRule: newRecurrenceRule });
+        const event = calenthorApi.createEvent({
+            ...newEventItem,
+            recurrenceRule: {
+                frequency: RecurrenceFrequency.DAILY,
+                interval: 1,
+                count: null,
+                endDate: null,
+            },
+        });
         const isDeleted = calenthorApi.deleteFutureRecurringEventsById(event.id, new Date('2090-01-01'));
         expect(isDeleted)
             .toBe(true);

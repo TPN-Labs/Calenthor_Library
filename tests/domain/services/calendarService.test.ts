@@ -1,8 +1,8 @@
 import { CalendarService } from '../../../src/domain/services';
-import { Duration, RecurrenceRule } from '../../../src/domain/models';
+import { Duration } from '../../../src/domain/models';
 import { EventIsNotRecurringError, EventNotFoundError, EventOverlapsError } from '../../../src/errors';
 import { RecurrenceFrequency } from '../../../src/types';
-import { MILLISECONDS_IN_A_DAY } from '../../../src/config';
+import { MILLISECONDS_IN_A_DAY, MILLISECONDS_IN_A_MONTH, MILLISECONDS_IN_A_WEEK } from '../../../src/config';
 
 describe('CalendarService', () => {
     let calendarService: CalendarService;
@@ -101,7 +101,8 @@ describe('CalendarService', () => {
                     start: start2,
                     duration,
                 });
-            }).toThrow(EventOverlapsError);
+            })
+                .toThrow(EventOverlapsError);
         });
 
         it('it creates a recurring event successfully', () => {
@@ -112,13 +113,19 @@ describe('CalendarService', () => {
                 title: 'Test Event',
                 start,
                 duration,
-                recurrenceRule: new RecurrenceRule(RecurrenceFrequency.DAILY, 1, numberOfOccurrences, null),
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.DAILY,
+                    interval: 1,
+                    count: numberOfOccurrences,
+                    endDate: null,
+                },
             });
             const occurrences = calendarService.listEvents({
                 start,
                 end: new Date(start.getTime() + MILLISECONDS_IN_A_DAY * 4),
             });
-            expect(occurrences).toHaveLength(numberOfOccurrences);
+            expect(occurrences)
+                .toHaveLength(numberOfOccurrences);
         });
     });
 
@@ -170,7 +177,9 @@ describe('CalendarService', () => {
                 start: new Date(start.getTime() - duration.value),
                 end: new Date(start.getTime() + duration.value),
             });
-            expect(events).not.toContain(event);
+            expect(events)
+                .not
+                .toContain(event);
         });
 
         it('it does not list occurrences of a deleted recurring event', () => {
@@ -180,30 +189,21 @@ describe('CalendarService', () => {
                 title: 'Test Event',
                 start,
                 duration,
-                recurrenceRule: new RecurrenceRule(RecurrenceFrequency.DAILY, 1, null, null),
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.DAILY,
+                    interval: 1,
+                    count: null,
+                    endDate: null,
+                },
             });
             calendarService.deleteRecurringEventById(event.id);
             const events = calendarService.listEvents({
                 start,
                 end: new Date(start.getTime() + MILLISECONDS_IN_A_DAY * 4),
             });
-            expect(events).not.toContain(event);
-        });
-
-        it('it generates occurrences for a recurring event', () => {
-            const start = new Date();
-            const duration = new Duration(60);
-            calendarService.createEvent({
-                title: 'Test Event',
-                start,
-                duration,
-                recurrenceRule: new RecurrenceRule(RecurrenceFrequency.DAILY, 1, null, null),
-            });
-            const occurrences = calendarService.listEvents({
-                start,
-                end: new Date(start.getTime() + MILLISECONDS_IN_A_DAY * 4),
-            });
-            expect(occurrences).toHaveLength(5);
+            expect(events)
+                .not
+                .toContain(event);
         });
 
         it('it generates no occurrences for a recurring event with an end date in the past', () => {
@@ -213,7 +213,12 @@ describe('CalendarService', () => {
                 title: 'Test Event',
                 start,
                 duration,
-                recurrenceRule: new RecurrenceRule(RecurrenceFrequency.DAILY, 1, null, new Date(start.getTime() - duration.value)),
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.DAILY,
+                    interval: 1,
+                    count: null,
+                    endDate: new Date(start.getTime() - duration.value),
+                },
             });
 
             const occurrences = calendarService.listEvents({
@@ -222,6 +227,74 @@ describe('CalendarService', () => {
             });
             expect(occurrences)
                 .toHaveLength(0);
+        });
+    });
+
+    describe('listRecurringEvents', () => {
+        it('it generates occurrences for a daily recurring event', () => {
+            const start = new Date();
+            const duration = new Duration(60);
+            calendarService.createEvent({
+                title: 'Test Event',
+                start,
+                duration,
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.DAILY,
+                    interval: 1,
+                    count: null,
+                    endDate: null,
+                },
+            });
+            const occurrences = calendarService.listEvents({
+                start,
+                end: new Date(start.getTime() + MILLISECONDS_IN_A_DAY * 4),
+            });
+            expect(occurrences)
+                .toHaveLength(5);
+        });
+
+        it('it generates occurrences for a weekly recurring event', () => {
+            const start = new Date();
+            const duration = new Duration(60);
+            calendarService.createEvent({
+                title: 'Test Event',
+                start,
+                duration,
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.WEEKLY,
+                    interval: 1,
+                    count: null,
+                    endDate: null,
+                },
+            });
+            const occurrences = calendarService.listEvents({
+                start,
+                end: new Date(start.getTime() + MILLISECONDS_IN_A_WEEK * 4),
+            });
+            expect(occurrences)
+                .toHaveLength(5);
+        });
+
+        it('it generates occurrences for a monthly recurring event', () => {
+            const start = new Date();
+            const duration = new Duration(60);
+            calendarService.createEvent({
+                title: 'Test Event',
+                start,
+                duration,
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.MONTHLY,
+                    interval: 1,
+                    count: null,
+                    endDate: null,
+                },
+            });
+            const occurrences = calendarService.listEvents({
+                start,
+                end: new Date(start.getTime() + MILLISECONDS_IN_A_MONTH * 4),
+            });
+            expect(occurrences)
+                .toHaveLength(5);
         });
     });
 
@@ -311,7 +384,12 @@ describe('CalendarService', () => {
                 title: 'Test Event',
                 start,
                 duration,
-                recurrenceRule: new RecurrenceRule(RecurrenceFrequency.DAILY, 1, null, null),
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.DAILY,
+                    interval: 1,
+                    count: null,
+                    endDate: null,
+                },
             });
             const isDeleted = calendarService.deleteRecurringEventById(event.id);
             expect(isDeleted)
@@ -321,7 +399,8 @@ describe('CalendarService', () => {
         it('it throws an error when deleting a non-existing recurring event', () => {
             expect(() => {
                 calendarService.deleteRecurringEventById('non-existing-id');
-            }).toThrow(EventNotFoundError);
+            })
+                .toThrow(EventNotFoundError);
         });
 
         it('it throws an error when deleting a non-recurring event', () => {
@@ -334,7 +413,8 @@ describe('CalendarService', () => {
             });
             expect(() => {
                 calendarService.deleteRecurringEventById(event.id);
-            }).toThrow(EventIsNotRecurringError);
+            })
+                .toThrow(EventIsNotRecurringError);
         });
     });
 
@@ -346,7 +426,12 @@ describe('CalendarService', () => {
                 title: 'Test Event',
                 start,
                 duration,
-                recurrenceRule: new RecurrenceRule(RecurrenceFrequency.DAILY, 1, null, null),
+                recurrenceRule: {
+                    frequency: RecurrenceFrequency.DAILY,
+                    interval: 1,
+                    count: null,
+                    endDate: null,
+                },
             });
             const isDeleted = calendarService.deleteFutureRecurringEventsById(event.id, new Date(start.getTime() + MILLISECONDS_IN_A_DAY * 3));
             expect(isDeleted)
@@ -356,7 +441,8 @@ describe('CalendarService', () => {
         it('it throws an error when deleting future recurring events of a non-existing recurring event', () => {
             expect(() => {
                 calendarService.deleteFutureRecurringEventsById('non-existing-id', new Date());
-            }).toThrow(EventNotFoundError);
+            })
+                .toThrow(EventNotFoundError);
         });
 
         it('it throws an error when deleting future recurring events of a non-recurring event', () => {
@@ -369,7 +455,8 @@ describe('CalendarService', () => {
             });
             expect(() => {
                 calendarService.deleteFutureRecurringEventsById(event.id, new Date());
-            }).toThrow(EventIsNotRecurringError);
+            })
+                .toThrow(EventIsNotRecurringError);
         });
     });
 });

@@ -1,7 +1,7 @@
 import { CalendarEvent } from '../models';
 import { DateRange, RecurrenceFrequency, EventItem } from '../../types';
 import { EventRepository } from '../../repositories';
-import { EventIsNotRecurringError, EventNotFoundError, EventOverlapsError, EventRecurrenceInvalidError } from '../../errors';
+import { EventIsNotRecurringError, EventNotFoundError, EventOverlapsError } from '../../errors';
 import { generateUUID } from '../../utils';
 import { MILLISECONDS_IN_A_DAY, MILLISECONDS_IN_A_MONTH, MILLISECONDS_IN_A_WEEK } from '../../config';
 
@@ -48,6 +48,8 @@ export class CalendarService implements ICalendarService {
                     event.duration,
                 ));
             }
+            // Suppressing this error because we use an enum and we know all possible values
+            // eslint-disable-next-line default-case
             switch (event.recurrenceRule!.frequency) {
             case RecurrenceFrequency.DAILY:
                 current = new Date(current.getTime() + event.recurrenceRule!.interval * MILLISECONDS_IN_A_DAY);
@@ -58,8 +60,6 @@ export class CalendarService implements ICalendarService {
             case RecurrenceFrequency.MONTHLY:
                 current = new Date(current.getTime() + event.recurrenceRule!.interval * MILLISECONDS_IN_A_MONTH);
                 break;
-            default:
-                throw new EventRecurrenceInvalidError(event.recurrenceRule!.frequency);
             }
         }
         return occurrences;

@@ -1,4 +1,5 @@
-import { Duration, RecurrenceRule } from '../domain/models';
+import { Duration } from '../domain/models';
+import { PeriodicityRule } from './recurrence';
 
 export type EventItem = {
     id?: string;
@@ -6,5 +7,5 @@ export type EventItem = {
     start: Date;
     duration: Duration;
     allowOverlap?: boolean;
-    recurrenceRule?: RecurrenceRule;
+    recurrenceRule?: PeriodicityRule;
 }
