@@ -6,6 +6,7 @@ export class CalendarEvent {
     private _title: string;
     private _start: Date;
     private _duration: Duration;
+    private _allowOverlap: boolean = false;
     private _recurrenceRule?: RecurrenceRule;
 
     /**
@@ -14,6 +15,7 @@ export class CalendarEvent {
      * @param title - The title of the event
      * @param start - The start date of the event
      * @param duration - The duration of the event
+     * @param allowOverlap - Whether the event is allowed to overlap with other events
      * @param recurrenceRule - The recurrence rule of the event, or undefined if the event does not recur
      */
     constructor(
@@ -21,12 +23,14 @@ export class CalendarEvent {
         title: string,
         start: Date,
         duration: Duration,
+        allowOverlap?: boolean,
         recurrenceRule?: RecurrenceRule,
     ) {
         this._id = id;
         this._title = title;
         this._start = start;
         this._duration = duration;
+        this._allowOverlap = allowOverlap ?? false;
         this._recurrenceRule = recurrenceRule;
     }
 
@@ -60,6 +64,14 @@ export class CalendarEvent {
 
     set duration(duration: Duration) {
         this._duration = duration;
+    }
+
+    get allowOverlap(): boolean {
+        return this._allowOverlap;
+    }
+
+    set allowOverlap(allowOverlap: boolean) {
+        this._allowOverlap = allowOverlap;
     }
 
     get recurrenceRule(): RecurrenceRule | undefined {

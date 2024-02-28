@@ -27,7 +27,10 @@ export class CalendarService implements ICalendarService {
         return this.eventRepository.listEvents()
             .some(event => {
                 if (excludeEventId && event.id === excludeEventId) return false;
-                return (start < event.end && end > event.start);
+                if (!event.allowOverlap) {
+                    return (start < event.end && end > event.start);
+                }
+                return false;
             });
     }
 
@@ -63,7 +66,7 @@ export class CalendarService implements ICalendarService {
 
     public createEvent(event: EventItem): CalendarEvent {
         const end = new Date(event.start.getTime() + event.duration.value);
-        if (this.checkForOverlap(event.start, end)) {
+        if (!event.allowOverlap && this.checkForOverlap(event.start, end)) {
             throw new EventOverlapsError();
         }
 
@@ -72,6 +75,7 @@ export class CalendarService implements ICalendarService {
             event.title,
             event.start,
             event.duration,
+            event.allowOverlap,
             event.recurrenceRule,
         );
         this.eventRepository.addEvent(newEvent);
