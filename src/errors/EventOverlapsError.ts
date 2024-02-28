@@ -7,7 +7,7 @@ export class EventOverlapsError extends Error {
     constructor(message: string = 'Event overlaps with another event.') {
         super(message);
         this._logger.error(message);
-        this.name = 'EventNotFoundError';
+        this.name = 'EventOverlapsError';
 
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, EventOverlapsError);

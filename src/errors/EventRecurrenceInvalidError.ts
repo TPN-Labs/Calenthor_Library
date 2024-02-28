@@ -7,7 +7,7 @@ export class EventRecurrenceInvalidError extends Error {
     constructor(message: string = 'The recurrence rule is invalid.') {
         super(message);
         this._logger.error(message);
-        this.name = 'EventNotFoundError';
+        this.name = 'EventRecurrenceInvalidError';
 
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, EventRecurrenceInvalidError);
