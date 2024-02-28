@@ -15,13 +15,13 @@ an interval of time.
 ## 📦 Installation
 
 ```bash
-npm install calenthor
+npm install calenthor-lib
 ```
 
 Or using yarn:
 
 ```bash
-yarn add calenthor
+yarn add calenthor-lib
 ```
 
 ### 🧩 Example
