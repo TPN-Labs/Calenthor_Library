@@ -25,6 +25,44 @@ describe('CalendarService', () => {
             .toBe(duration);
     });
 
+    it('it allows overlap for events with allowOverlap set to true', () => {
+        const start = new Date();
+        const duration = new Duration(60);
+        calendarService.createEvent({
+            title: 'Test Event 1',
+            start,
+            duration,
+        });
+        expect(() => {
+            calendarService.createEvent({
+                title: 'Test Event 2',
+                start,
+                duration,
+                allowOverlap: true,
+            });
+        })
+            .not.toThrow(EventOverlapsError);
+    });
+
+    it('it does not allow overlap for events with allowOverlap set to false', () => {
+        const start = new Date();
+        const duration = new Duration(60);
+        calendarService.createEvent({
+            title: 'Test Event 1',
+            start,
+            duration,
+        });
+        expect(() => {
+            calendarService.createEvent({
+                title: 'Test Event 2',
+                start,
+                duration,
+                allowOverlap: false,
+            });
+        })
+            .toThrow(EventOverlapsError);
+    });
+
     it('it throws an error when creating an overlapping event', () => {
         const start = new Date();
         const duration = new Duration(60);

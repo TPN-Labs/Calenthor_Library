@@ -5,5 +5,6 @@ export type EventItem = {
     title: string;
     start: Date;
     duration: Duration;
+    allowOverlap?: boolean;
     recurrenceRule?: RecurrenceRule;
 }
