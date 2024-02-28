@@ -1,5 +1,5 @@
 import { Duration } from './duration';
-import { RecurrenceRule } from './recurrenceRule';
+import { PeriodicityRule } from '../../types';
 
 export class CalendarEvent {
     private readonly _id: string;
@@ -7,7 +7,7 @@ export class CalendarEvent {
     private _start: Date;
     private _duration: Duration;
     private _allowOverlap: boolean = false;
-    private _recurrenceRule?: RecurrenceRule;
+    private _recurrenceRule?: PeriodicityRule;
 
     /**
      * CalendarEvent constructor
@@ -24,7 +24,7 @@ export class CalendarEvent {
         start: Date,
         duration: Duration,
         allowOverlap?: boolean,
-        recurrenceRule?: RecurrenceRule,
+        recurrenceRule?: PeriodicityRule,
     ) {
         this._id = id;
         this._title = title;
@@ -74,11 +74,11 @@ export class CalendarEvent {
         this._allowOverlap = allowOverlap;
     }
 
-    get recurrenceRule(): RecurrenceRule | undefined {
+    get recurrenceRule(): PeriodicityRule | undefined {
         return this._recurrenceRule;
     }
 
-    set recurrenceRule(recurrenceRule: RecurrenceRule | undefined) {
+    set recurrenceRule(recurrenceRule: PeriodicityRule | undefined) {
         this._recurrenceRule = recurrenceRule;
     }
 }

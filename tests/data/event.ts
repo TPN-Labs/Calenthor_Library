@@ -1,7 +1,6 @@
-import { RecurrenceRule } from '../../src/domain/models';
 import { generateUUID } from '../../src/utils';
 import { MILLISECONDS_IN_A_MINUTE } from '../../src/config';
-import { EventItem, RecurrenceFrequency } from '../../src/types';
+import { EventItem } from '../../src/types';
 
 const generateString = (length: number): string => {
     let result = '';
@@ -19,10 +18,3 @@ export const newEventItem: EventItem = {
     start: new Date(),
     duration: { value: MILLISECONDS_IN_A_MINUTE * 30 }, // 30 minutes
 };
-
-export const newRecurrenceRule = new RecurrenceRule(
-    RecurrenceFrequency.DAILY,
-    1,
-    null,
-    null,
-);
